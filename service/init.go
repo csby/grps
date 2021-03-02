@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/csby/grps/config"
 	"github.com/csby/gwsf/glog"
 	"github.com/csby/gwsf/gserver"
 	"github.com/csby/gwsf/gtype"
@@ -13,13 +14,13 @@ import (
 
 const (
 	moduleType    = "server"
-	moduleName    = "gwsf-svc-example"
-	moduleRemark  = "WEB服务示例"
+	moduleName    = "grps"
+	moduleRemark  = "反向代理服务"
 	moduleVersion = "1.0.1.0"
 )
 
 var (
-	cfg              = NewConfig()
+	cfg              = config.NewConfig()
 	log              = &glog.Writer{Level: glog.LevelAll}
 	svr gtype.Server = nil
 )
@@ -70,6 +71,7 @@ func init() {
 			fmt.Println("load configure file fail: ", err)
 		}
 	}
+	cfg.Path = cfgPath
 
 	// init certificate
 	if cfg.Https.Enabled {
