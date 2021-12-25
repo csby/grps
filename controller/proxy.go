@@ -296,6 +296,12 @@ func (s *Proxy) GetProxyTargetsDoc(doc gtype.Doc, method string, uri gtype.Uri) 
 			Port:    "8080",
 			Version: 0,
 			Disable: false,
+			Spares: []*config.ProxySpare{
+				{
+					IP:   "192.168.210.18",
+					Port: "8080",
+				},
+			},
 		},
 		{
 			Id:      gtype.NewGuid(),
@@ -304,6 +310,12 @@ func (s *Proxy) GetProxyTargetsDoc(doc gtype.Doc, method string, uri gtype.Uri) 
 			Port:    "8443",
 			Version: 1,
 			Disable: true,
+			Spares: []*config.ProxySpare{
+				{
+					IP:   "192.168.210.27",
+					Port: "8443",
+				},
+			},
 		},
 	})
 	function.AddOutputError(gtype.ErrInput)
@@ -330,6 +342,24 @@ func (s *Proxy) AddProxyTarget(ctx gtype.Context, ps gtype.Params) {
 	if err != nil || port < 1 {
 		ctx.Error(gtype.ErrInput, fmt.Sprintf("目标端口(%s)无效", argument.Target.Port))
 		return
+	}
+	c := len(argument.Target.Spares)
+	if c > 0 {
+		for i := 0; i < c; i++ {
+			spare := argument.Target.Spares[i]
+			if spare == nil {
+				ctx.Error(gtype.ErrInput, "备用目标项目为空")
+				return
+			}
+			if len(spare.IP) < 1 {
+				ctx.Error(gtype.ErrInput, "备用目标地址为空")
+				return
+			}
+			if len(spare.Port) < 1 {
+				ctx.Error(gtype.ErrInput, "备用目标端口为空")
+				return
+			}
+		}
 	}
 
 	if len(argument.ServerId) < 1 {
@@ -374,6 +404,12 @@ func (s *Proxy) AddProxyTargetDoc(doc gtype.Doc, method string, uri gtype.Uri) {
 			Port:    "8080",
 			Version: 0,
 			Disable: false,
+			Spares: []*config.ProxySpare{
+				{
+					IP:   "192.168.210.18",
+					Port: "8080",
+				},
+			},
 		},
 	})
 	function.SetOutputDataExample(nil)
@@ -458,6 +494,25 @@ func (s *Proxy) ModifyProxyTarget(ctx gtype.Context, ps gtype.Params) {
 		ctx.Error(gtype.ErrInput, "目标端口为空")
 		return
 	}
+	c := len(argument.Target.Spares)
+	if c > 0 {
+		for i := 0; i < c; i++ {
+			spare := argument.Target.Spares[i]
+			if spare == nil {
+				ctx.Error(gtype.ErrInput, "备用目标项目为空")
+				return
+			}
+			if len(spare.IP) < 1 {
+				ctx.Error(gtype.ErrInput, "备用目标地址为空")
+				return
+			}
+			if len(spare.Port) < 1 {
+				ctx.Error(gtype.ErrInput, "备用目标端口为空")
+				return
+			}
+		}
+	}
+
 	port, err := strconv.ParseUint(argument.Target.Port, 10, 16)
 	if err != nil || port < 1 {
 		ctx.Error(gtype.ErrInput, fmt.Sprintf("目标端口(%s)无效", argument.Target.Port))
@@ -500,6 +555,12 @@ func (s *Proxy) ModifyProxyTargetDoc(doc gtype.Doc, method string, uri gtype.Uri
 			Port:    "8080",
 			Version: 0,
 			Disable: false,
+			Spares: []*config.ProxySpare{
+				{
+					IP:   "192.168.210.18",
+					Port: "8080",
+				},
+			},
 		},
 	})
 	function.SetOutputDataExample(nil)
@@ -735,11 +796,12 @@ func (s *Proxy) initRoutes() {
 			}
 
 			s.proxyServer.Routes = append(s.proxyServer.Routes, gproxy.Route{
-				IsTls:   server.TLS,
-				Address: fmt.Sprintf("%s:%s", server.IP, server.Port),
-				Domain:  target.Domain,
-				Target:  fmt.Sprintf("%s:%s", target.IP, target.Port),
-				Version: target.Version,
+				IsTls:        server.TLS,
+				Address:      fmt.Sprintf("%s:%s", server.IP, server.Port),
+				Domain:       target.Domain,
+				Target:       fmt.Sprintf("%s:%s", target.IP, target.Port),
+				Version:      target.Version,
+				SpareTargets: target.SpareTargets(),
 			})
 		}
 	}
