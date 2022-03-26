@@ -16,7 +16,7 @@ const (
 	moduleType    = "server"
 	moduleName    = "grps"
 	moduleRemark  = "反向代理服务"
-	moduleVersion = "1.0.2.0"
+	moduleVersion = "1.0.3.0"
 )
 
 var (

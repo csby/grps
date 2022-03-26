@@ -45,8 +45,8 @@ func (s *ProxyServer) AddTarget(target *ProxyTarget) error {
 
 	count := len(s.Targets)
 	for i := 0; i < count; i++ {
-		if target.Domain == s.Targets[i].Domain {
-			return fmt.Errorf("domain '%s' has been existed", target.Domain)
+		if target.Domain == s.Targets[i].Domain && target.Path == s.Targets[i].Path {
+			return fmt.Errorf("domain '%s' and path '%s' has been existed", target.Domain, target.Path)
 		}
 	}
 
@@ -85,8 +85,8 @@ func (s *ProxyServer) ModifyTarget(target *ProxyTarget) error {
 		if target.Id == s.Targets[i].Id {
 			continue
 		}
-		if target.Domain == s.Targets[i].Domain {
-			return fmt.Errorf("domain '%s' not existed", target.Domain)
+		if target.Domain == s.Targets[i].Domain && target.Path == s.Targets[i].Path {
+			return fmt.Errorf("domain '%s' and path '%s' not existed", target.Domain, target.Path)
 		}
 	}
 

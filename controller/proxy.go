@@ -799,6 +799,7 @@ func (s *Proxy) initRoutes() {
 				IsTls:        server.TLS,
 				Address:      fmt.Sprintf("%s:%s", server.IP, server.Port),
 				Domain:       target.Domain,
+				Path:         target.Path,
 				Target:       fmt.Sprintf("%s:%s", target.IP, target.Port),
 				Version:      target.Version,
 				SpareTargets: target.SpareTargets(),

@@ -51,6 +51,9 @@ func (s *Handler) AfterRouting(ctx gtype.Context) {
 
 }
 
+func (s *Handler) ExtendOptSetup(opt gtype.Option) {
+}
+
 func (s *Handler) ExtendOptApi(router gtype.Router, path *gtype.Path, preHandle gtype.HttpHandle, wsc gtype.SocketChannelCollection) {
 	s.proxyController = controller.NewProxy(s.GetLog(), cfg, wsc)
 

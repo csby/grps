@@ -10,6 +10,7 @@ type ProxySpare struct {
 type ProxyTarget struct {
 	Id     string `json:"id" note:"标识ID"`
 	Domain string `json:"domain" note:"域名"`
+	Path   string `json:"path" note:"路径，仅http有效"`
 
 	IP      string        `json:"ip" note:"目标地址"`
 	Port    string        `json:"port" note:"目标端口"`
@@ -24,6 +25,7 @@ func (s *ProxyTarget) CopyFrom(source *ProxyTarget) {
 	}
 
 	s.Domain = source.Domain
+	s.Path = source.Path
 	s.IP = source.IP
 	s.Port = source.Port
 	s.Version = source.Version
